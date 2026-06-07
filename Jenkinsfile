@@ -11,14 +11,19 @@ pipeline {
         
         stage('SonarQube Code Analysis') {
             steps {
-                // Dùng Docker chạy Sonar Scanner để quét code
-                sh '''
-                docker run --rm \
-                    -e SONAR_HOST_URL="http://54.160.101.211:9000" \
-                    -e SONAR_TOKEN="squ_cceeead39ed69ce62d175e7ccf10edcb41d38030" \
-                    -v "$(pwd):/usr/src" \
-                    sonarsource/sonar-scanner-cli
-                '''
+                script {
+                    // Lấy biến từ Credentials của Jenkins
+                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN'),
+                                    string(credentialsId: 'sonar-host-ip', variable: 'SONAR_IP')]) {
+                        sh '''
+                        docker run --rm \
+                            -e SONAR_HOST_URL="http://${SONAR_IP}:9000" \
+                            -e SONAR_TOKEN="${SONAR_TOKEN}" \
+                            -v "$(pwd):/usr/src" \
+                            sonarsource/sonar-scanner-cli
+                        '''
+                    }
+                }
             }
         }
         
