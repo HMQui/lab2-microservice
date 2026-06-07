@@ -2,8 +2,6 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-// Test endpoint
-
 app.get('/', (req, res) => {
     res.json({
         status: "Success",
